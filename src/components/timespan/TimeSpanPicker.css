@@ -1,0 +1,179 @@
+/* TimeSpanPicker.css */
+
+/* Popup styling */
+.c-timespan-popup {
+  position: absolute;
+  left: 20px;
+  margin-top: 27px;
+  padding: 10px 0;
+  background-color: #ffffff;
+  color: #424242;
+  border: solid;
+  border-color: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03), 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+/* Container for the time list */
+.c-time-list-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+/* Highlight bar within the time list */
+.c-time-highlight {
+  position: absolute;
+  top: 44%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: calc(20px + 8px);
+  border: solid;
+  border-width: 1px 0;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* Footer within the time picker */
+.c-time-footer {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-top: 16px;
+  overflow: hidden;
+  clear: both;
+}
+
+/* Container for individual time list items */
+.c-time-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 56px;
+  line-height: 1.4285714286;
+}
+
+.c-time-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.c-time-list::before, 
+.c-time-list::after {
+  content: '';
+  box-shadow: 0 0 3em 2.5em #ffffff;
+  z-index: 0;
+}
+
+/* Title for the time list */
+.c-time-list-title {
+  display: block;
+  font-family: inherit; /* Adjust as needed, suggested: 'Roboto', sans-serif; */
+  font-size: 12px;
+  line-height: 1.5;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  color: #666666;
+  z-index: 1;
+}
+
+/* Individual time list items */
+.c-item {
+  padding: 4px 0;
+  font-size: 14px;
+  color: #888;
+  cursor: default; 
+}
+
+.c-item:hover {
+  color: red; 
+}
+
+.c-item.selected {
+  font-weight: bold;
+}
+
+/* Separator between spinner elements */
+.c-separator {
+  padding-top: 15px;
+  font-size: 14px;
+  color: #888;
+  font-weight: bold;
+}
+
+
+/* Input */
+.c-timespan{
+  min-height: 26px;
+    margin: 10px 0;
+    border-radius: 4px;
+    background-color: #f2f2f1;
+    padding: 0;
+    background-color: #f2f2f1;
+    border: 1px solid #8D8D8D;
+    color: #333333;
+    font-size: 14px;
+}
+
+.c-timespan:hover{
+    box-shadow: 0 0 0 2px #7b7b7a;
+    border-color: transparent;  
+}
+
+.c-timespan:focus-visible{
+    outline: none;
+}
+.c-timespan{
+  margin: 10px 0;
+  display: flex;
+  padding-right: 2px;
+
+  /* TODO: Remove these, its just temp */
+  margin-left: 20px; 
+  margin-right: 20px;
+}
+.c-timespan.c-focus{
+  box-shadow: 0 0 0 2px #3E80D1;
+    border-color: transparent;
+}
+
+.c-inner{
+    box-shadow: none;
+    flex: 1;
+    display: inline-flex;
+}
+.c-input{
+    flex: 1;
+    margin-left: 10px;
+    border-width: 0;
+    background: none;
+    font: inherit;
+    outline: 0;
+}
+/* Icons */
+.c-timespan button{
+  border: none;
+}
+.open-popup-button{
+  min-height: 14px;
+}
+
+.c-time-list-wrapper:hover{
+  background-color: lightblue;
+}
+.c-time-list:focus{
+  box-shadow: 0 0 0 2px red inset
+}
+.c-time-list:focus-visible{
+  outline: none;
+}
