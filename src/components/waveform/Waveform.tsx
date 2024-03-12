@@ -34,8 +34,8 @@ interface AudioSection {
         duration: string;
     };
     group?: Array<AudioSection>;
-    pulsate?: boolean;
 }
+
 type AudioInspectorProps = {
     file: string;
     sections: Array<AudioSection>;
@@ -582,6 +582,7 @@ export const Waveform = ({
     const checkStepGroupings = () => {
         let groups: Array<Array<AudioSection>> = [];
         let groupedIds: string[] = [];
+        const totalDuration = sections[sections.length - 1].end ?? 0;
 
         // Sort sections by start time and check for adjacent sections to group
         sections.sort((a, b) => {
@@ -590,6 +591,8 @@ export const Waveform = ({
             let range = Math.abs(aStart - bStart);
 
             // Group sections if they are within the stepGroupThreshold
+            const groupingFactor = 0.02; // 2%
+            stepGroupThreshold = totalDuration * groupingFactor;
             if (range <= stepGroupThreshold) {
                 let isGrouped = -1;
 
