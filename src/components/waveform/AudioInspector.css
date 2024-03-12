@@ -1,0 +1,604 @@
+.core-container {
+  position: relative;
+  display: block;
+  border-radius: 8px;
+  background: #fff;
+  overflow: visible;
+}
+.core-container cyara-overlay-loader.hide {
+  display: none;
+}
+.core-container .waveform-container {
+  display: flex;
+  position: relative;
+  border-radius: 8px 8px 0 0;
+}
+.core-container .waveform-container::before {
+  position: absolute;
+  top: 1.2rem;
+  left: 0;
+  width: 100%;
+  background: transparent;
+  height: 60px;
+  content: "";
+  border-radius: 8px 8px 0 0;
+  border: solid 2px #dddddd;
+  border-width: 1px 1px 0 1px;
+  box-sizing: border-box;
+}
+.core-container .waveform-container canvas {
+  height: 60px !important;
+}
+.core-container .waveform-container .wave {
+  position: relative;
+}
+.core-container .waveform-container .wave cursor {
+  position: relative;
+  z-index: 1 !important;
+  top: 1.5rem !important;
+  font-size: 70%;
+  color: rgba(5, 28, 44, 0.5);
+}
+.core-container .waveform-container .wave cursor.no-label::after {
+  content: "";
+}
+.core-container .waveform-container .wave cursor.no-label::before {
+  content: "";
+}
+.core-container .waveform-container .wave > wave {
+  overflow: visible !important;
+}
+.core-container .waveform-container .wave > wave:focus-visible {
+  outline: solid auto rgba(70, 143, 177, 0.3);
+}
+.core-container .waveform-container .wave > wave > canvas {
+  top: 18px !important;
+  box-sizing: border-box;
+}
+.core-container .waveform-container .wave > wave > wave {
+  top: 0.2rem !important;
+  border-right: none !important;
+  min-width: 1px;
+}
+.core-container .waveform-container .wave > wave > wave::after {
+  position: absolute;
+  top: 1rem;
+  right: 0;
+  width: 2px;
+  background: #3c8649;
+  height: 100%;
+  content: "";
+}
+.core-container .waveform-container .wave > wave > wave > canvas {
+  top: 15px !important;
+}
+.core-container .waveform-container .wave > wave::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+  height: 7px;
+}
+.core-container .waveform-container .wave > wave::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker.marker-start span {
+  margin-left: 0.15rem;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker {
+  z-index: 1;
+  height: 1rem !important;
+  overflow: unset !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker > div:nth-child(1) {
+  display: none;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker > div:nth-child(2) {
+  margin-left: 0.2rem;
+  height: 1.1rem;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker .popup.popover {
+  background-color: #fff;
+  position: absolute;
+  padding: 7px;
+  top: 2px;
+  display: none;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span {
+  color: #393939;
+  position: relative;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-size: 70% !important;
+  padding: 0 4px;
+  border-radius: 8px;
+  white-space: nowrap;
+  line-height: 1.35;
+  display: inline-block;
+  font-weight: 800;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span::before {
+  content: "";
+  position: absolute;
+  bottom: -0.2rem;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: none;
+  border-top: 0.2rem solid #dddddd;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span:after {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 19px;
+  height: 60px;
+  width: 1px;
+  background: rgba(5, 28, 44, 0.3);
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover {
+  flex-direction: row;
+  gap: 1rem;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover > *:not(:last-child) {
+  position: relative;
+  display: block;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover {
+  flex-direction: column;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover {
+  display: flex;
+  background-color: #d53b3f;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 5px 10px;
+  border-radius: 4px;
+  color: rgb(82, 82, 82);
+  font-size: 100%;
+  line-height: 1.15;
+  transition: opacity 200ms ease-in-out 0s;
+  opacity: 0;
+  z-index: 1000;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  width: max-content;
+  font-weight: 400;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover ::after,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover ::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #fff;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover .c-popover-details-wrapper,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover .c-popover-details-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 200px;
+  white-space: break-spaces;
+  overflow-wrap: break-word;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover .c-popover-details-wrapper .c-popover-top-wrapper,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover .c-popover-details-wrapper .c-popover-top-wrapper {
+  flex-direction: row;
+  display: flex;
+  margin-bottom: 8px;
+  white-space: initial;
+  justify-content: space-between;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover .c-popover-result-wrapper,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover .c-popover-result-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover .c-popover-result-wrapper .c-popover-result-detail,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover .c-popover-result-wrapper .c-popover-result-detail {
+  margin-bottom: 8px;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover.open,
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover.open {
+  opacity: 1;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker.error span {
+  display: block;
+  margin-top: 0;
+  background-color: #d53b3f;
+  color: #fff;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  text-align: center;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker svg {
+  display: none;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region {
+  top: 1.2rem !important;
+  cursor: ew-resize !important;
+  height: 61px !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.no-handle .wavesurfer-handle {
+  background-color: transparent !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.default, .core-container .waveform-container .wave > wave .wavesurfer-region.error {
+  transition: background-color 200ms ease-in;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.default {
+  background-color: transparent !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.default:hover {
+  background-color: rgba(5, 28, 44, 0.05) !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.error {
+  background-color: rgba(213, 59, 63, 0.2) !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.error:hover {
+  background-color: rgba(213, 59, 63, 0.3) !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.error .header {
+  width: 100%;
+  background: #d53b3f;
+  color: #fff;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.error + .wavesurfer-marker span {
+  background-color: #d53b3f;
+  color: #fff;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.error + .wavesurfer-marker span::before {
+  border-top-color: #d53b3f;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.selection {
+  z-index: 3 !important;
+  background-color: rgba(5, 28, 44, 0.1);
+  cursor: all-scroll !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.selection .wavesurfer-handle {
+  background-color: rgba(141, 141, 141, 0.6) !important;
+  width: 0.25rem !important;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.active {
+  z-index: 3;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region.active + .wavesurfer-marker {
+  z-index: 2;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-region:last-child {
+  border-top-right-radius: 8px;
+}
+.core-container .waveform-container .labels {
+  font-size: 75%;
+  width: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 1.2rem;
+}
+.core-container .waveform-container .labels > div {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  margin-right: 0.5rem;
+  text-align: right;
+}
+.core-container .waveform-container .labels.hide {
+  display: none;
+}
+.core-container .waveform-container .waveform {
+  flex-grow: 1;
+}
+.core-container .waveform-container .waveform:hover {
+  cursor: ew-resize !important;
+}
+.core-container.multi-channel canvas {
+  height: 141px !important;
+}
+.core-container.multi-channel .waveform-container .wave > wave {
+  overflow: visible !important;
+}
+.core-container.multi-channel .waveform-container .wave > wave .wavesurfer-marker span::after {
+  height: 141px;
+}
+.core-container.multi-channel .waveform-container .wave > wave .wavesurfer-region {
+  height: 141px !important;
+}
+.core-container .toolbar {
+  display: flex;
+  align-items: center;
+  border-radius: 0 0 8px 8px;
+  border: solid 1px #dddddd;
+  background: #fff;
+  height: 2.5rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+.core-container .toolbar .options {
+  display: flex;
+  align-items: center;
+  width: 35%;
+}
+.core-container .toolbar .options .option-icon {
+  width: 1rem;
+}
+.core-container .toolbar .options .option-icon svg path {
+  fill: #525252;
+}
+.core-container .toolbar .options .option-icon.spin {
+  width: 1rem;
+  height: 1rem;
+  animation: spin 1s steps(8) infinite;
+}
+.core-container .toolbar .options .input-container {
+  width: 6rem;
+  margin-left: 0.5rem;
+}
+.core-container .toolbar .options .lhs-utility-container {
+  color: #525252;
+  font-size: 75%;
+}
+.core-container .toolbar .options .lhs-utility-container .range-close {
+  cursor: pointer;
+}
+.core-container .toolbar .options .lhs-utility-container .range-close:hover {
+  opacity: 0.6;
+}
+.core-container .toolbar .controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30%;
+  min-width: 300px;
+  gap: 12px;
+}
+.core-container .toolbar .controls .start-time,
+.core-container .toolbar .controls .end-time {
+  width: 3rem;
+  font-size: 75%;
+}
+.core-container .toolbar .controls .end-time {
+  margin-left: 0.25rem;
+}
+.core-container .toolbar .controls .start-time {
+  text-align: right;
+  margin-right: 0.25rem;
+}
+.core-container .toolbar .controls .controls-inner {
+  gap: 12px;
+  display: flex;
+  white-space: nowrap;
+}
+.core-container .toolbar .controls .play-button .play-btn-inner {
+  width: 4rem;
+  text-align: center;
+}
+.core-container .toolbar .rhs-utility-container {
+  width: 35%;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  gap: 12px;
+}
+.core-container .progress-container {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: calc(100% - 4rem);
+  transform: translateY(-50%);
+  padding: 2rem;
+}
+.core-container.loading .toolbar {
+  background: #eaeaea;
+}
+.core-container .close-selection-btn {
+  position: absolute;
+  right: 0.15rem;
+  top: 0.05rem;
+}
+
+.zoom-reset {
+  position: absolute;
+  top: -0.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+.zoom-reset.hide {
+  display: none;
+}
+
+.cursor-popover {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  color: #525252;
+  font-size: 100%;
+  line-height: 1.15;
+  transition: opacity 200ms ease-in-out;
+  opacity: 0;
+  z-index: -1000;
+  display: none;
+  color: #fff;
+  background: #051c2c;
+  white-space: nowrap;
+  max-width: 600px;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.65rem;
+}
+.cursor-popover .arrow,
+.cursor-popover .arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+}
+.cursor-popover .arrow {
+  visibility: hidden;
+}
+.cursor-popover .arrow::before {
+  visibility: visible;
+  content: "";
+  transform: rotate(45deg);
+}
+.cursor-popover[data-popper-placement^=top] > .arrow {
+  bottom: 0;
+}
+.cursor-popover[data-popper-placement^=top] > .arrow:before {
+  top: 3px;
+}
+.cursor-popover[data-popper-placement^=bottom] {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
+}
+.cursor-popover[data-popper-placement^=bottom] .arrow {
+  top: -4px;
+}
+.cursor-popover[data-popper-placement^=left] .arrow {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #fff;
+  right: -4px;
+}
+.cursor-popover[data-popper-placement^=right] .arrow {
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #fff;
+  left: -4px;
+}
+.cursor-popover[data-fade] {
+  opacity: 1;
+}
+.cursor-popover[data-show] {
+  display: block;
+  z-index: 2000;
+}
+.cursor-popover[data-popper-placement^=top] > .arrow {
+  border-top: 10px solid #051c2c;
+}
+.cursor-popover[data-popper-placement^=bottom] .arrow {
+  border-bottom: 10px solid #051c2c;
+}
+.cursor-popover[data-popper-placement^=left] .arrow {
+  border-left: 10px solid #051c2c;
+}
+.cursor-popover[data-popper-placement^=right] .arrow {
+  border-right: 10px solid #051c2c;
+}
+
+.strike {
+  position: relative;
+}
+.strike::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+}
+
+.selection-bar {
+  align-items: center;
+  border-radius: 4px;
+  background: #051c2c;
+  height: 2.5rem;
+  width: 160px;
+}
+.selection-bar .selection-text {
+  color: #fff;
+  font-size: 70%;
+  flex-grow: 1;
+  margin-left: 0.5rem;
+  margin-right: 1rem;
+}
+.selection-bar .selection-btn {
+  flex-grow: 1;
+  text-align: right;
+  font-size: 110%;
+  margin-right: 0.5rem;
+}
+
+.zoom-popup {
+  padding: 0.25rem;
+  font-size: 80%;
+}
+
+.d-none {
+  display: none;
+}
+
+.v-hidden {
+  visibility: hidden;
+}
+
+.test {
+  color: red !important;
+}
+
+.reference-button {
+  background-color: lightblue;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  z-index: 1000;
+}
+
+div.selection-bar.popper-element {
+  align-items: center;
+  border-radius: 4px;
+  background: #051c2c;
+  height: 2.5rem;
+  display: flex;
+  z-index: 1000;
+}
+
+.c-popover-badge {
+  display: inline-block;
+  border-radius: 4px;
+  font-weight: bold;
+  padding: 0.2025rem 0.27rem;
+  font-size: 75%;
+}
+.c-popover-badge.success {
+  border: solid 2px #3c8649;
+  color: #fff;
+  background: #3c8649;
+}
+.c-popover-badge.failed {
+  border: solid 2px #d53b3f;
+  color: #fff;
+  background: #d53b3f;
+}
+.c-popover-badge.satisfactory {
+  border: solid 2px #FFA44A;
+  color: #051c2c;
+  background: #FFA44A;
+}
+.c-popover-badge.aborted {
+  border: solid 2px #333333;
+  color: #fff;
+  background: #333333;
+}
+.c-popover-badge.internal-error {
+  border: solid 2px #d53b3f;
+  color: #fff;
+  background: #d53b3f;
+}
+.c-popover-badge.pending {
+  border: solid 2px #EBEAEB;
+  color: #051c2c;
+  background: #EBEAEB;
+}
+
+/*# sourceMappingURL=AudioInspector.css.map */
