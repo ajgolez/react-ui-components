@@ -4,10 +4,8 @@ import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor.js';
 import RegionsPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions';
 import MarkersPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.markers';
 import { Region } from 'wavesurfer.js/src/plugin/regions';
-import './AudioInspector.css';
+import './Waveform.css';
 import { createPopper } from '@popperjs/core';
-
-const cyaraColorPrimary450 = '#3E80D1';
 
 enum ResultTypeId {
     Success = 0,
@@ -18,14 +16,21 @@ enum ResultTypeId {
     Pending
 }
 
+type GroupedAudioSection = {
+    id: string
+    sections: Array<AudioSection>
+    start: number | null
+    end: number | null
+    title?: string;
+    type?: string;
+}
+
 interface AudioSection {
     id: string;
     start: number | null;
     end: number | null;
     title?: string;
     type?: string;
-    mergeSection?: boolean;
-    isVoiceStep?: boolean;
     popoverDetails?: {
         stepNo: number;
         resultTypeId: ResultTypeId;
@@ -33,7 +38,6 @@ interface AudioSection {
         responseTime: string;
         duration: string;
     };
-    group?: Array<AudioSection>;
 }
 
 type AudioInspectorProps = {
@@ -80,7 +84,7 @@ export const Waveform = ({
     stepGroupThreshold = 1,
     onLoaded,
     onError,
-    waveColor = cyaraColorPrimary450,
+    waveColor = '#3E80D1',
     ...props }: AudioInspectorProps) => {
     let waveColour = waveColor;
     const [splitChannels, setSplitChannels] = useState(false);
@@ -93,20 +97,19 @@ export const Waveform = ({
     const [hasMultiChannel, setHasMultiChannel] = useState(false);
     const wavesurferRef = useRef<WaveSurfer | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
-    const [_sections, setSections] = useState<Array<AudioSection>>([]);
     const [_suppressRegionPopover, setSuppressRegionPopover] = useState<boolean>(false);
     const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
+    let [group, setGroup] = useState<Array<GroupedAudioSection>>([]);
     const progressLoaderRef = useRef(null);
     const progressLoader = progressLoaderRef.current;
     const [referenceElement, setReferenceElement] = useState<HTMLElement | null>(null);
     const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
     let [selectionText, setSelectionText] = useState('');
-    let _groupedSections: Array<AudioSection> = [];
+    let _groupedSections: Array<GroupedAudioSection> = [];
     let suppressRegionClear: boolean;
     let seekPosition: number = 0;
     const [popperIsVisible, setPopperIsVisible] = useState(false);
     const [selectionZoomed, setSelectionZoomed] = useState(false);
-    //let selectionZoomed: boolean;
 
     if (referenceElement && popperElement) {
         // Create a Popper instance to position the popper element relative to the reference element
@@ -190,15 +193,15 @@ export const Waveform = ({
         }
     }, []);
 
-    // Parse and set the sections state whenever the sections prop changes
-    useEffect(() => {
-        if (sections) {
-            const parsedSections = typeof sections === 'string' ? JSON.parse(sections) : sections;
-            setSections(parsedSections);
-        } else {
-            setSections([]);
-        }
-    }, [sections]);
+    // // Parse and set the sections state whenever the sections prop changes
+    // useEffect(() => {
+    //     if (sections) {
+    //         const parsedSections = typeof sections === 'string' ? JSON.parse(sections) : sections;
+    //         setSections(parsedSections);
+    //     } else {
+    //         setSections([]);
+    //     }
+    // }, [sections]);
 
     useEffect(() => {
 
@@ -467,33 +470,29 @@ export const Waveform = ({
             // Remove all non-selection-based markers and regions
             wavesurfer.clearMarkers();
             clearStepRegions();
-
-            // Use grouped sections if available
-            if (_groupedSections && _groupedSections.length > 0) {
-                sections = _groupedSections;
-            }
+            setGroup(_groupedSections);
 
             // Generate the wavesurfer regions and markers based on sections
-            sections.forEach((section, i) => {
+            _groupedSections.forEach((groupedSection) => {
 
                 // Add a region for each section
                 wavesurfer.addRegion({
-                    start: section.start,
-                    end: section.end,
-                    id: section.id,
+                    start: groupedSection.start,
+                    end: groupedSection.end,
+                    id: groupedSection.id,
                     drag: false,
                     resize: false,
                     data: {
                         step: true,
-                        class: section.type,
-                        label: section.title
+                        class: groupedSection.type,
+                        label: groupedSection.title
                     }
                 });
 
                 // Add a marker for each section
                 wavesurfer.addMarker({
-                    time: section.start,
-                    label: section.title,
+                    time: groupedSection.start,
+                    label: groupedSection.title,
                     position: `top`
                 });
 
@@ -502,68 +501,38 @@ export const Waveform = ({
                 containers.forEach((container) => {
                     const markers = container.querySelectorAll('marker > div > span');
 
-                    if (!section.group) {
-                        // Add a popover for non-grouped sections
-                        let popover = document.createElement(`audio-inspector-popover`);
-                        popover.setAttribute(`data-id`, section.id);
-                        popover.className = `popover`;
-                        let popoverContent = `
-                            <div class="c-popover-details-wrapper">
-                                <div class="c-popover-top-wrapper">
-                                    <div class="c-popover-step">
-                                        <strong>Step ${section.popoverDetails?.stepNo}</strong>
-                                    </div>
-                                    <div class="c-popover-badge ${getResultTypeInfo(section.popoverDetails?.resultTypeId).className}">
-                                        ${getResultTypeInfo(section.popoverDetails?.resultTypeId).text}
-                                        </div>
-                                </div>
-                                <div class="c-popover-result-wrapper">
-                                    <div class="c-popover-result-detail">${section.popoverDetails?.resultDetail}</div>
-                                    <div class="c-popover-response-time">Response Time: ${section.popoverDetails?.responseTime}</div>
-                                    <div class="c-popover-duration">Duration: ${section.popoverDetails?.duration}</div>
-                                </div>
-                            </div>`;
-                        popover.innerHTML = popoverContent;
+                    // For each marker, check if it already has a popover, and if not, create and append a new popover
+                    markers.forEach((marker, i) => {
+                        if (!marker.querySelector('audio-inspector-popover')) {
+                            let popover = document.createElement('audio-inspector-popover');
+                            popover.setAttribute('data-id', `${groupedSection.id}`);
+                            popover.className = 'popover';
+                            let popoverContent = '';
 
-                        if (markers[i]) {
-                            const clonedPopover = popover.cloneNode(true);
-                            markers[i].appendChild(clonedPopover);
+                            // Iterate through each section in the grouped section
+                            groupedSection.sections.forEach((section) => {
+                                popoverContent += `
+                <div class="c-popover-details-wrapper">
+                    <div class="c-popover-top-wrapper">
+                        <div class="c-popover-step">
+                            <strong>Step ${section.popoverDetails?.stepNo}</strong>
+                        </div>
+                        <div class="c-popover-badge ${getResultTypeInfo(section.popoverDetails?.resultTypeId).className}">
+                            ${getResultTypeInfo(section.popoverDetails?.resultTypeId).text}
+                        </div>
+                    </div>
+                    <div class="c-popover-result-wrapper">
+                        <div class="c-popover-result-detail">${section.popoverDetails?.resultDetail}</div>
+                        <div class="c-popover-response-time">Response Time: ${section.popoverDetails?.responseTime}</div>
+                        <div class="c-popover-duration">Duration: ${section.popoverDetails?.duration}</div>
+                    </div>
+                </div>`;
+                            });
+
+                            popover.innerHTML = popoverContent;
+                            marker.appendChild(popover);
                         }
-                    } else {
-                        // Create a container for grouped popovers
-                        let popoverGroupContainer = document.createElement('audio-inspector-popover');
-                        popoverGroupContainer.setAttribute('data-group', section.id);
-                        popoverGroupContainer.className = 'grouped-popover';
-
-                        // Add individual popovers for each group member
-                        section.group.forEach(g => {
-                            const status = g.popoverDetails?.resultTypeId;
-                            let innerPopover = document.createElement('div');
-                            innerPopover.className = 'popover-inner';
-                            innerPopover.innerHTML = `
-                            <div class="c-popover-details-wrapper">
-                                <div class="c-popover-top-wrapper">
-                                        <div class="c-popover-step">
-                                            <strong>Step ${g.popoverDetails?.stepNo}</strong>
-                                        </div>
-                                        <div class="c-popover-badge ${getResultTypeInfo(status).className}">
-                                        ${getResultTypeInfo(status).text}
-                                        </div>
-                                    </div>
-                                    <div class="c-popover-result-wrapper">
-                                        <div class="c-popover-result-detail">${g.popoverDetails?.resultDetail}</div>
-                                        <div class="c-popover-response-time">Response Time: ${g.popoverDetails?.responseTime}</div>
-                                        <div class="c-popover-duration">Duration: ${g.popoverDetails?.duration}</div>
-                                    </div>
-                                </div>`;
-                            popoverGroupContainer.appendChild(innerPopover);
-                        });
-
-                        // Append the group container to the appropriate marker
-                        if (markers[i]) {
-                            markers[i].appendChild(popoverGroupContainer);
-                        }
-                    }
+                    });
                 });
             });
 
@@ -648,32 +617,28 @@ export const Waveform = ({
                 end: sectionEnd,
                 type: type,
                 title: title,
-                group: group
+                sections: group
             })
         });
 
         // Include non-grouped sections in _groupedSections
-        if (_groupedSections.length > 0) {
-            sections.forEach(section => {
-                if (groupedIds.indexOf(section.id) === -1) {
-                    _groupedSections.push(section);
-                }
-            })
-        }
-
+        sections.forEach(section => {
+            if (groupedIds.indexOf(section.id) === -1) {
+                const newGroupedSection: GroupedAudioSection = {
+                    id: section.id,
+                    sections: [section],
+                    start: section.start,
+                    end: section.end,
+                    title: section.title,
+                    type: section.type
+                };
+                _groupedSections.push(newGroupedSection);
+            }
+        });
         // Update the sections with the newly grouped sections
         updateSections();
     }
 
-    // Update the position style of all markers
-    // const updateMarker = (position: string) => {
-    //     const markers = document.querySelectorAll('marker > div > span');
-    //     markers.forEach((el) => {
-    //         if (el instanceof HTMLElement) {
-    //             el.style.position = position;
-    //         }
-    //     });
-    // };
 
     // Update the style of the waveform
     const updateOverflow = (overflow: string) => {
@@ -757,23 +722,6 @@ export const Waveform = ({
         }
     };
 
-
-    const showPopupFromCurrentTime = (currentTime: number | undefined) => {
-        // if (!wavesurfer) {
-        //     return null;
-        // }
-        // let regions = Object.values(wavesurfer.regions.list);
-        // let selectedRegion;
-        // regions.forEach(region => {
-        //     if (region.start == parseFloat(currentTime.toFixed(2))) {
-        //         selectedRegion = region.id;
-        //     }
-        // });
-        // if (selectedRegion) {
-        //     showStepPopover(selectedRegion);
-        // }
-    }
-
     // Toggle visibility of zoom controls based on the current zoom level
     const toggleZoomControls = (newZoom: number) => {
         if (newZoom === 0) {
@@ -787,74 +735,50 @@ export const Waveform = ({
         checkZoomReset();
     }
 
-    // Move to the next step in the waveform
-    const goNextStep = () => {
+    // Navigate to different steps in the waveform based on the given direction
+    const goToStep = (direction: 'first' | 'end' | 'next' | 'previous') => {
         if (!wavesurfer) {
             return null;
         }
-        let currentTime = wavesurfer.getCurrentTime();
-        // Ensure _sections is sorted by start time
-        _sections.sort((a, b) => (a.start ?? 0) - (b.start ?? 0));
-        for (let i = 0; i < _sections.length; i++) {
-            if (_sections[i].start! > currentTime) {
-                // Seek to the start of the next section
-                wavesurfer.seekTo(_sections[i].start! / wavesurfer.getDuration());
-                // Show the popover for the next step after a short delay
-                setTimeout(() => {
-                    showStepPopover(_sections[i].id);
-                }, 100);
+        const currentTime = wavesurfer.getCurrentTime();
+        // Sort the sections by their start time
+        const sortedGroups = group.sort((a, b) => (a.start ?? 0) - (b.start ?? 0));
 
-                break;
-            }
-        }
-    }
-
-    // Move to the previous step in the waveform
-    const goPreviousStep = () => {
-        if (!wavesurfer) {
-            return null;
-        }
-        // second buffer, will ensure that player isn't stuck when trying to go to previous step when playing
-        let buffer = 1;
-        let currentTime = wavesurfer.getCurrentTime();
-        for (let i = (sections.length - 1); i >= 0; i--) {
-            if (sections[i].start! < (currentTime - buffer)) {
-                wavesurfer.setCurrentTime(sections[i].start!);
-                //wavesurfer.seekAndCenter(seekPosition);
-                setTimeout(() => {
-                    console.log('sections', sections[i].id)
-                    console.log('_groupedSections', sections[i])
-
-                    showStepPopover(sections[i].id);
-                }, 100);
-                break;
-            }
-        }
-    }
-
-    // Move to the first step in the waveform
-    const goToFirstStep = () => {
-        // Set the current time to the beginning of the waveform
-        wavesurfer?.setCurrentTime(0);
-        //wavesurfer?.seekAndCenter(seekPosition);
-
-        setTimeout(() => {
-            showStepPopover(sections[0].id);
-        }, 100);
-    }
-
-    // Move to the end of the waveform
-    const goToEnd = () => {
-        if (_sections) {
-            // Set the current time to the end of the waveform
-            wavesurfer?.setCurrentTime(duration);
-            //wavesurfer?.seekAndCenter(seekPosition);
+        // Seek to a given section and display its popover
+        const seekToSection = (section: AudioSection) => {
+            wavesurfer.seekTo(section.start! / wavesurfer.getDuration());
             setTimeout(() => {
-                showStepPopover(_sections[_sections.length - 1].id);
+                const id = `${section.id}`;
+                showStepPopover(id);
             }, 100);
-
+        };
+        if (direction === 'first') {
+            seekToSection(sortedGroups[0]);
+        } else if (direction === 'end') {
+            const lastSection = sortedGroups[sortedGroups.length - 1];
+            wavesurfer.setCurrentTime(lastSection.end ?? wavesurfer.getDuration());
+            setTimeout(() => {
+                const id = `${lastSection.id}`;
+                showStepPopover(id);
+            }, 100);
+        } else if (direction === 'next') {
+            for (let i = 0; i < sortedGroups.length; i++) {
+                if (sortedGroups[i].start! > currentTime) {
+                    console.log('sortedGroups[i]', sortedGroups)
+                    seekToSection(sortedGroups[i]);
+                    break;
+                }
+            }
+        } else if (direction === 'previous') {
+            const buffer = 1;
+            for (let i = sortedGroups.length - 1; i >= 0; i--) {
+                if (sortedGroups[i].start! < currentTime - buffer) {
+                    seekToSection(sortedGroups[i]);
+                    break;
+                }
+            }
         }
-    }
+    };
 
     // Zoom into a specific region of the waveform
     const zoomRegion = (region: Region) => {
@@ -1000,11 +924,11 @@ export const Waveform = ({
                     <div className="controls">
                         <div className="start-time">0s</div>
                         <div className="controls-inner">
-                            <button disabled={isLoading} title={startLabel} onClick={() => { goToFirstStep(); }} className="mr-2">Start</button>
-                            <button disabled={isLoading} title={previousStepLabel} onClick={() => { goPreviousStep(); }} className="mr-2">Back</button>
+                            <button disabled={isLoading} title={startLabel} onClick={() => { goToStep('first'); }} className="mr-2">Start</button>
+                            <button disabled={isLoading} title={previousStepLabel} onClick={() => { goToStep('previous'); }} className="mr-2">Back</button>
                             <button disabled={isLoading} title={isPlaying ? 'Pause' : 'Play'} onClick={() => { togglePlay(); }} className="mr-2">{isPlaying ? 'Pause' : 'Play'}</button>
-                            <button disabled={isLoading} title={nextStepLabel} onClick={() => { goNextStep(); }} className="mr-2">Next</button>
-                            <button disabled={isLoading} title={endLabel} onClick={() => { goToEnd(); }} className="mr-2">End</button>
+                            <button disabled={isLoading} title={nextStepLabel} onClick={() => { goToStep('next'); }} className="mr-2">Next</button>
+                            <button disabled={isLoading} title={endLabel} onClick={() => { goToStep('end'); }} className="mr-2">End</button>
                         </div>
                         <div className="end-time">{duration.toFixed(2)}s</div>
                     </div>

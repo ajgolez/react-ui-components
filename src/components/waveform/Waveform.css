@@ -5,7 +5,7 @@
   background: #fff;
   overflow: visible;
 }
-.core-container cyara-overlay-loader.hide {
+.core-container overlay-loader.hide {
   display: none;
 }
 .core-container .waveform-container {
@@ -144,7 +144,8 @@
   display: block;
 }
 .core-container .waveform-container .wave > wave .wavesurfer-marker span .popover {
-  flex-direction: column;
+  flex-direction: row;
+  gap: 1rem;
 }
 .core-container .waveform-container .wave > wave .wavesurfer-marker span .popover,
 .core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover {
@@ -186,6 +187,11 @@
   max-width: 200px;
   white-space: break-spaces;
   overflow-wrap: break-word;
+}
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .popover .c-popover-details-wrapper:not(:first-child),
+.core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover .c-popover-details-wrapper:not(:first-child) {
+  border-left: 1px solid lightgrey;
+  padding-left: 11px;
 }
 .core-container .waveform-container .wave > wave .wavesurfer-marker span .popover .c-popover-details-wrapper .c-popover-top-wrapper,
 .core-container .waveform-container .wave > wave .wavesurfer-marker span .grouped-popover .c-popover-details-wrapper .c-popover-top-wrapper {
@@ -601,4 +607,4 @@ div.selection-bar.popper-element {
   background: #EBEAEB;
 }
 
-/*# sourceMappingURL=AudioInspector.css.map */
+/*# sourceMappingURL=Waveform.css.map */

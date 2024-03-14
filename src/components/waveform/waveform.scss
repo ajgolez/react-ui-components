@@ -7,7 +7,7 @@ Helvetica,
 Arial,
 sans-serif;
 $token-border-base-radius: 4px;
-$cyaraColorDanger500:#d53b3f;
+$ColorDanger500:#d53b3f;
 $token-type-size-base:100%;
 $token-type-size-base-line-height:1.15;
 $colorWhite:#fff;
@@ -108,7 +108,7 @@ $colorSuccess500:#3c8649;
   background: $colorWhite;
   overflow: visible;
 
-  cyara-overlay-loader.hide {
+  overlay-loader.hide {
     display: none;
   }
 
@@ -286,13 +286,14 @@ $colorSuccess500:#3c8649;
             }
 
             .popover {
-              flex-direction: column;
+              flex-direction: row;
+              gap: 1rem;
             }
 
             .popover,
             .grouped-popover {
               display: flex;
-              background-color: $cyaraColorDanger500;
+              background-color: $ColorDanger500;
               padding: 8px;
               background: $colorWhite;
               border: 1px solid rgba(0, 0, 0, 0.2);
@@ -329,6 +330,11 @@ $colorSuccess500:#3c8649;
                 white-space: break-spaces;
                 overflow-wrap: break-word;
 
+                &:not(:first-child) {
+                  border-left: 1px solid lightgrey;
+                  padding-left: 11px;
+                }
+
                 .c-popover-top-wrapper {
                   flex-direction: row;
                   display: flex;
@@ -361,7 +367,7 @@ $colorSuccess500:#3c8649;
             span {
               display: block;
               margin-top: 0;
-              background-color: $cyaraColorDanger500;
+              background-color: $ColorDanger500;
               color: $colorWhite;
               border-radius: 50%;
               width: 1rem;
@@ -400,25 +406,25 @@ $colorSuccess500:#3c8649;
           }
 
           &.error {
-            background-color: rgba($cyaraColorDanger500, 0.2) !important;
+            background-color: rgba($ColorDanger500, 0.2) !important;
 
             &:hover {
-              background-color: rgba($cyaraColorDanger500, 0.3) !important;
+              background-color: rgba($ColorDanger500, 0.3) !important;
             }
 
             .header {
               width: 100%;
-              background: $cyaraColorDanger500;
+              background: $ColorDanger500;
               color: $colorWhite;
             }
 
             &+.wavesurfer-marker {
               span {
-                background-color: $cyaraColorDanger500;
+                background-color: $ColorDanger500;
                 color: $colorWhite;
 
                 &::before {
-                  border-top-color: $cyaraColorDanger500;
+                  border-top-color: $ColorDanger500;
                 }
 
               }
@@ -811,9 +817,9 @@ div.selection-bar.popper-element {
   }
 
   &.failed {
-    border: solid 2px $cyaraColorDanger500;
+    border: solid 2px $ColorDanger500;
     color: $colorWhite;
-    background: $cyaraColorDanger500;
+    background: $ColorDanger500;
   }
 
   &.satisfactory {
@@ -829,9 +835,9 @@ div.selection-bar.popper-element {
   }
 
   &.internal-error {
-    border: solid 2px $cyaraColorDanger500;
+    border: solid 2px $ColorDanger500;
     color: $colorWhite;
-    background: $cyaraColorDanger500;
+    background: $ColorDanger500;
   }
 
   &.pending {
