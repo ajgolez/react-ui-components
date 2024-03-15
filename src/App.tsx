@@ -2,6 +2,11 @@ import wavfile from './assets/sample-single-channel.wav';
 import TimeSpanPicker from './components/timespan/TimeSpanPicker';
 import wavfile2 from './assets/sample-multi-channel.wav';
 import { Waveform } from './components/waveform/Waveform';
+import { Icon } from './components/icon/icon';
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+/>
 
 const regionsData =
   [
@@ -209,8 +214,7 @@ function App() {
           id='13' /> */}
 
 
-        <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-        <Waveform
+        {/* <Waveform
           file={wavfile}
           startLabel='Go to Start'
           channelTopLabel='Heard'
@@ -219,18 +223,9 @@ function App() {
           onLoaded={() => console.log('Audio file loaded')}
           rightContainer={htmlContentRight}
           leftContainer={htmlContentLeft}
-        />
+        /> */}
 
-        {/* <AudioInspectorOldVer
-          file={wavfile2}
-          startLabel='Go to Start'
-          channelTopLabel='Heard'
-          channelBottomLabel='Replied With'
-          sections={regionsData2}
-          onLoaded={() => console.log('Audio file loaded')}
-          rightContainer={htmlContentRight}
-          leftContainer={htmlContentLeft}
-        />  */}
+        <Icon iconName="user" size='sm' />
 
       </div>
     </div>
