@@ -213,8 +213,8 @@ function App() {
           maxSeconds={20}
           id='13' /> */}
 
-
-        {/* <Waveform
+        <br /><br /><br /><br /><br /><br /><br />
+        <Waveform
           file={wavfile}
           startLabel='Go to Start'
           channelTopLabel='Heard'
@@ -223,9 +223,10 @@ function App() {
           onLoaded={() => console.log('Audio file loaded')}
           rightContainer={htmlContentRight}
           leftContainer={htmlContentLeft}
-        /> */}
+          groupingFactor={20}
+        />
 
-        <Icon iconName="user" size='sm' />
+        {/* <Icon iconName="user" size='sm' /> */}
 
       </div>
     </div>

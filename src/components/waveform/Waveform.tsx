@@ -59,6 +59,7 @@ type AudioInspectorProps = {
     zoomLabel?: string;
     zoomIncrement?: number;
     stepGroupThreshold?: number;
+    groupingFactor?: number
     onLoaded?: () => void;
     onError?: (error: any) => void;
     waveColor?: string;
@@ -82,6 +83,7 @@ export const Waveform = ({
     zoomLabel = 'Zoom',
     zoomIncrement = 100,
     stepGroupThreshold = 1,
+    groupingFactor = 2,
     onLoaded,
     onError,
     waveColor = '#3E80D1',
@@ -411,7 +413,6 @@ export const Waveform = ({
     useEffect(() => {
         if (wavesurfer) {
             checkStepGroupings();
-            updateSections();
         }
     }, [wavesurfer, sections]);
 
@@ -552,37 +553,38 @@ export const Waveform = ({
         let groups: Array<Array<AudioSection>> = [];
         let groupedIds: string[] = [];
         const totalDuration = sections[sections.length - 1].end ?? 0;
+        const stepGroupThreshold = totalDuration * (groupingFactor / 100);
 
-        // Sort sections by start time and check for adjacent sections to group
-        sections.sort((a, b) => {
-            let aStart = a.start ?? 0;
-            let bStart = b.start ?? 0;
-            let range = Math.abs(aStart - bStart);
+        // Iterate over sections to check for adjacent sections to group
+        for (let i = 0; i < sections.length; i++) {
+            let isGrouped = false;
 
-            // Group sections if they are within the stepGroupThreshold
-            const groupingFactor = 0.02; // 2%
-            stepGroupThreshold = totalDuration * groupingFactor;
-            if (range <= stepGroupThreshold) {
-                let isGrouped = -1;
-
-                // Check if the current section is already part of a group
-                groups.forEach((group: Array<AudioSection>, i: number) => {
-                    group.forEach((groupEl: AudioSection) => {
-                        if (groupEl.id === b.id) {
-                            isGrouped = i;
-                        }
-                    })
-                });
-
-                // If not grouped, create a new group or add to an existing group
-                if (isGrouped === -1) {
-                    parseInt(a.id, 10) < parseInt(b.id, 10) ? groups.push([a, b]) : groups.push([b, a]);
-                } else {
-                    groups[isGrouped].push(a);
+            // Check if the current section is already part of a group
+            for (let group of groups) {
+                if (group.some(groupEl => groupEl.id === sections[i].id)) {
+                    isGrouped = true;
+                    break;
                 }
             }
-            return 0;
-        });
+
+            // If not grouped, check if it should be grouped with adjacent sections
+            if (!isGrouped) {
+                let newGroup: Array<AudioSection> = [sections[i]];
+
+                for (let j = i + 1; j < sections.length; j++) {
+                    let range = Math.abs((sections[i].start ?? 0) - (sections[j].start ?? 0));
+                    if (range <= stepGroupThreshold) {
+                        newGroup.push(sections[j]);
+                        groupedIds.push(sections[j].id);
+                    } else {
+                        break;
+                    }
+                }
+
+                groups.push(newGroup);
+                groupedIds.push(sections[i].id);
+            }
+        }
 
         // Create grouped sections based on the groups formed
         groups.forEach((group, i) => {
@@ -590,25 +592,39 @@ export const Waveform = ({
             let sectionStart: number | null = null;
             let title = '';
             let type: string = 'default';
+            const titles: string[] = [];
 
             // Determine the start, end, title, and type for the grouped section
             group.forEach((section, i) => {
+                // Track all section IDs in the group
                 groupedIds.push(section.id);
+
+                // Determine the earliest start time for the group
                 if (section.start !== null && (!sectionStart || section.start <= sectionStart)) {
                     sectionStart = section.start;
                 }
+
+                // Determine the latest end time for the group
                 if (section.end !== null && (!sectionEnd || section.end > sectionEnd)) {
                     sectionEnd = section.end;
                 }
-                if (section === group[group.length - 1]) {
-                    title = `${title.substring(0, title.length - 2)} & ${section.title}`;
-                } else {
-                    title += `${section.title}, `;
-                }
+
+                // Collect titles of all sections in the group
+                titles.push(section.title || '');
+
+                // If any section in the group has an error, mark the entire group as an error
                 if (section.type === `error`) {
                     type = `error`;
                 }
             });
+
+            // Construct the title for the grouped section, joining individual titles with ", " and adding " & " before the last title
+            if (titles.length > 1) {
+                title = titles.slice(0, -1).join(", ") + " & " + titles[titles.length - 1];
+            } else if (titles.length === 1) {
+                // If there's only one title, use it as is
+                title = titles[0];
+            }
 
             // Add the grouped section to _groupedSections
             _groupedSections.push({
@@ -638,7 +654,6 @@ export const Waveform = ({
         // Update the sections with the newly grouped sections
         updateSections();
     }
-
 
     // Update the style of the waveform
     const updateOverflow = (overflow: string) => {
