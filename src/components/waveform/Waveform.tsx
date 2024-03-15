@@ -58,7 +58,6 @@ type AudioInspectorProps = {
     channelMultiLabel?: string;
     zoomLabel?: string;
     zoomIncrement?: number;
-    stepGroupThreshold?: number;
     groupingFactor?: number
     onLoaded?: () => void;
     onError?: (error: any) => void;
@@ -82,7 +81,6 @@ export const Waveform = ({
     resetZoomLabel = 'Reset Zoom',
     zoomLabel = 'Zoom',
     zoomIncrement = 100,
-    stepGroupThreshold = 1,
     groupingFactor = 2,
     onLoaded,
     onError,
@@ -195,22 +193,12 @@ export const Waveform = ({
         }
     }, []);
 
-    // // Parse and set the sections state whenever the sections prop changes
-    // useEffect(() => {
-    //     if (sections) {
-    //         const parsedSections = typeof sections === 'string' ? JSON.parse(sections) : sections;
-    //         setSections(parsedSections);
-    //     } else {
-    //         setSections([]);
-    //     }
-    // }, [sections]);
-
+    // Initialize WaveSurfer with configuration options
     useEffect(() => {
 
         // Convert color to rgb for opacity
         let color = hexToRgb(waveColour);
         let waveColor = `rgba(${color?.r},${color?.g},${color?.b}, 1)`;
-        // Initialize WaveSurfer with configuration options
         if (containerRef.current) {
             let ws = wavesurferRef.current;
             ws = WaveSurfer.create({
@@ -306,7 +294,6 @@ export const Waveform = ({
                 setTimeout(() => {
                     toggleZoomControls(newZoom);
                 }, 100);
-                checkStepGroupings();
             });
             // ws.on('seek', (e) => {
             //     console.log('suppressRegionClear', suppressRegionClear)
@@ -406,15 +393,16 @@ export const Waveform = ({
                 ws?.destroy();
             };
         }
-    }, [file, wavesurferRef, sections]);
+    }, []);
 
 
-    // Call updateSections after the wavesurfer state has been updated
+    // Group all sections then add markers after the wavesurfer state has been updated
     useEffect(() => {
         if (wavesurfer) {
-            checkStepGroupings();
+            groupSections();
+            addMarkers();
         }
-    }, [wavesurfer, sections]);
+    }, [wavesurfer]);
 
     // Toggles the visibility of a specific step popover
     const showStepPopover = async (id: string) => {
@@ -466,7 +454,8 @@ export const Waveform = ({
         }
     }
 
-    const updateSections = () => {
+    // Generate the markers based on groups of sections
+    const addMarkers = () => {
         if (wavesurfer) {
             // Remove all non-selection-based markers and regions
             wavesurfer.clearMarkers();
@@ -546,10 +535,16 @@ export const Waveform = ({
                 }
             });
         }
+
+        // Accessibility-compliance, markers to have unique IDs
+        const polygons = document.querySelectorAll('svg polygon');
+        polygons.forEach((polygon, index) => {
+            polygon.setAttribute('id', `polygon-${index}`);
+        });
     }
 
     // Determine if steps need to be grouped based on their proximity
-    const checkStepGroupings = () => {
+    const groupSections = () => {
         let groups: Array<Array<AudioSection>> = [];
         let groupedIds: string[] = [];
         const totalDuration = sections[sections.length - 1].end ?? 0;
@@ -651,8 +646,6 @@ export const Waveform = ({
                 _groupedSections.push(newGroupedSection);
             }
         });
-        // Update the sections with the newly grouped sections
-        updateSections();
     }
 
     // Update the style of the waveform
