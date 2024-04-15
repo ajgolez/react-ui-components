@@ -3,6 +3,9 @@ import TimeSpanPicker from './components/timespan/TimeSpanPicker';
 import wavfile2 from './assets/sample-multi-channel.wav';
 import { Waveform } from './components/waveform/Waveform';
 import { Icon } from './components/icon/icon';
+//import '@progress/kendo-theme-default/dist/all.css';
+import '@progress/kendo-theme-bootstrap/dist/all.css';
+import { CustomTags } from './components/customtags/CustomTags';
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
@@ -213,7 +216,7 @@ function App() {
           maxSeconds={20}
           id='13' /> */}
 
-        <br /><br /><br /><br /><br /><br /><br />
+        {/* <br /><br /><br /><br /><br /><br /><br />
         <Waveform
           file={wavfile}
           startLabel='Go to Start'
@@ -224,10 +227,10 @@ function App() {
           rightContainer={htmlContentRight}
           leftContainer={htmlContentLeft}
           groupingFactor={20}
-        />
+        /> */}
 
         {/* <Icon iconName="user" size='sm' /> */}
-
+        <CustomTags></CustomTags>
       </div>
     </div>
   );
