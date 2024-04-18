@@ -61,12 +61,14 @@ export const CustomTags = () => {
                 data={data}
                 itemRender={itemRender}
                 style={{ width: "300px" }}
-                placeholder="e.g. Austria"
+                placeholder="Type to search."
                 filterable={true}
                 adaptive={true} // Enables responsive behavior for the MultiSelect
                 onFilterChange={handleFilterChange}
                 value={selectedCountries}
                 onChange={handleChange}
+                required={true}
+                skipDisabledItems={true}
             />
         </div>
     )
