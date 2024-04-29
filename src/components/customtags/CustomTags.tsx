@@ -1,23 +1,22 @@
-
-
 import {
     ListItemProps,
     MultiSelect,
-    MultiSelectChangeEvent,
+    MultiSelectChangeEvent, MultiSelectFilterChangeEvent
 } from "@progress/kendo-react-dropdowns";
 import React, { cloneElement, useState } from "react";
 import { filterBy } from "@progress/kendo-data-query";
-import countries from "./countries";
+import datalist from "./countries";
+
 /**
  * A component that renders a MultiSelect with custom checkbox items.
  * Allows filtering countries via an input field.
  */
-export const CustomTags = () => {
-    // State to hold the filtered or initial list of countries
-    const [data, setData] = React.useState(countries.slice());
-    const [selectedCountries, setSelectedCountries] = useState<string[]>([]); // Explicitly declare the state type as string[]
-    // It renders a checkbox with each country and maps over children for additional customization.
-    const itemRender = (
+export const DropdownMultiSelect = () => {
+    const [data, setData] = React.useState(datalist);
+    const [selectedItem, setSelectedItem] = useState<string[]>([]);
+
+    // Custom rendering function for each dropdown item
+    const renderDropdownItem = (
         li: React.ReactElement<HTMLLIElement>,
         itemProps: ListItemProps
     ) => {
@@ -27,48 +26,61 @@ export const CustomTags = () => {
                     type="checkbox"
                     name={itemProps.dataItem}
                     checked={itemProps.selected}
-                    onChange={(e) => handleCheckboxChange(itemProps.dataItem, e.target.checked)}
-                />
+                    onChange={(e) => toggleSelection(itemProps.dataItem, e.target.checked)}
+                /><span> d</span>
                 {React.Children.map(li.props.children, child => child)}
             </>
         );
         return cloneElement(li, {}, itemChildren);
     };
-    const handleCheckboxChange = (dataItem: string, isChecked: boolean) => {
-        setSelectedCountries(prev => {
-            const newSelected = new Set(prev);
-            if (isChecked) {
-                newSelected.add(dataItem);
-            } else {
-                newSelected.delete(dataItem);
+
+    // Toggle selection state item    
+    const toggleSelection = (dataItem: string, isChecked: boolean) => {
+        setSelectedItem(prev => {
+            // Create a new array from the previous state
+            const newSelected = [...prev];
+            const index = newSelected.indexOf(dataItem);
+
+            if (isChecked && index === -1) {
+                // Item not in the array and should be added
+                newSelected.push(dataItem);
+            } else if (!isChecked && index !== -1) {
+                // Item in the array and should be removed
+                newSelected.splice(index, 1);
             }
-            return Array.from(newSelected);
+
+            return newSelected;
         });
     };
-    // Handles the filter change event to filter the list of countries based on user input.
-    const handleFilterChange = (event: any) => {
-        setData(filterBy(countries.slice(), event.filter));
+
+
+    // Handle changes in the search filter
+    const handleFilterChange = (event: MultiSelectFilterChangeEvent) => {
+        setData(filterBy(datalist, event.filter));
     };
-    // Handle change event for MultiSelect
+
+    // Handle changes in the selected items
     const handleChange = (event: MultiSelectChangeEvent) => {
-        console.log('handlechange')
-        setSelectedCountries(event.target.value as string[]); // Cast to string[] if you're certain of the structure
+        setSelectedItem(event.target.value as string[]);
     };
+
     return (
         <div className="example-wrapper">
-            <p>Select European countries:</p>
+            <p>Select item/s:</p>
             <MultiSelect
                 data={data}
-                itemRender={itemRender}
-                style={{ width: "300px" }}
-                placeholder="Type to search."
-                filterable={true}
-                adaptive={true} // Enables responsive behavior for the MultiSelect
-                onFilterChange={handleFilterChange}
-                value={selectedCountries}
+                value={selectedItem}
                 onChange={handleChange}
+                itemRender={renderDropdownItem}
+                textField="text"
+                dataItemKey="id"
+                placeholder="Type to search..."
+                filterable={true}
+                adaptive={true}
+                onFilterChange={handleFilterChange}
                 required={true}
                 skipDisabledItems={true}
+                style={{ width: "300px" }}
             />
         </div>
     )

@@ -5,7 +5,7 @@ import { Waveform } from './components/waveform/Waveform';
 import { Icon } from './components/icon/icon';
 //import '@progress/kendo-theme-default/dist/all.css';
 import '@progress/kendo-theme-bootstrap/dist/all.css';
-import { CustomTags } from './components/customtags/CustomTags';
+import { DropdownMultiSelect } from './components/customtags/CustomTags';
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
@@ -230,7 +230,7 @@ function App() {
         /> */}
 
         {/* <Icon iconName="user" size='sm' /> */}
-        <CustomTags></CustomTags>
+        <DropdownMultiSelect></DropdownMultiSelect>
       </div>
     </div>
   );
