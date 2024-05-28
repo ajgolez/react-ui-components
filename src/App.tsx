@@ -6,6 +6,33 @@ import { Icon } from './components/icon/icon';
 //import '@progress/kendo-theme-default/dist/all.css';
 import '@progress/kendo-theme-bootstrap/dist/all.css';
 import { DropdownMultiSelect } from './components/customtags/CustomTags';
+
+import Timeline from './components/timeline/Timeline';
+import { DataModel } from './components/timeline/types';
+
+const groups: DataModel[] = [
+  {
+    items: [
+      { date: '2021-01-01 A', flag: '2006', title: 'Title 1', subtitle: 'Subtitle 1', content: <div>LEFT Happy New Year! <br /><br /><br /><br /><br /><br /><br /><br /><br /><input type='text'></input><button>Button</button></div> },
+      { date: '2021-02-14 AB lorem ipsum', title: 'Title 2', subtitle: 'Subtitle 2', content: <div>RIGHT Valentine's Day</div> },
+      { date: '2021-02-14 AB lorem ipsum', title: 'Title 2a', subtitle: 'Subtitle 2a', content: <div>RIGHT Valentine's Day</div> },
+    ],
+  },
+  {
+    items: [
+      { date: '2021-03-17 ABC', flag: '2008', title: 'Title 3', subtitle: 'Subtitle 3', content: <div>LEFT St. Patrick's Day</div> },
+      { date: '2021-07-04 ABCD', title: 'Title 4', subtitle: 'Subtitle 4' },
+      { date: '2021-03-17 a', title: 'Title 5', subtitle: 'Subtitle 3', content: <div>LEFT St. Patrick's Day</div> },
+      { date: '2021-03-17 BC', title: 'Title 6', subtitle: 'Subtitle 3', content: <div>LEFT St. Patrick's Day</div> },
+
+
+    ],
+  },
+  // Add more groups and items here
+];
+
+
+
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
@@ -201,6 +228,24 @@ const htmlContentRight = (
   </>
 );
 
+const timelineData = [
+  {
+    title: "Step 1",
+    description: "This is the first step.",
+    date: "2020-01-01",
+    content: "<strong>Custom HTML</strong> Here",
+    side: "right"
+  },
+  {
+    title: "Step 2",
+    description: "This is the second step.",
+    date: "2020-01-02",
+    content: "<div style='color: red;'>More custom HTML content</div>",
+    side: "left"
+  }
+];
+
+
 function App() {
   return (
     <div className="App">
@@ -230,7 +275,11 @@ function App() {
         /> */}
 
         {/* <Icon iconName="user" size='sm' /> */}
-        <DropdownMultiSelect></DropdownMultiSelect>
+        {/* <DropdownMultiSelect></DropdownMultiSelect> */}
+
+        {/* <Timeline items={items} orientation="vertical" groups={groups} /> */}
+        <Timeline data={groups} position='alternate' />
+
       </div>
     </div>
   );

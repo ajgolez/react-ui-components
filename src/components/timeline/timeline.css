@@ -1,0 +1,86 @@
+
+/* Timeline.css */
+.timeline {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%; /* Full width for better control */
+    align-items: center;
+}
+.timeline-item {
+    display: flex;
+    justify-content: space-between; /* Ensures maximum separation initially */
+    width: 100%; /* Use the full width to better manage positioning */
+    position: relative; /* Needed for absolute positioning of children */
+    align-items: center;
+    margin: 50px 0;
+}
+.timeline-date {
+    /* padding: 10px; */
+    position: relative; 
+    z-index: 2; /* Ensures date is above the line */
+}
+.timeline-content {
+    padding: 10px;
+    border: 1px solid blue;
+    border-radius: 5px;
+    /* width: 300px; */
+    position: relative; 
+    z-index: 2; /* Ensures content is above the line */
+}
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: 50%;
+    transform: translateX(-50%); /* Center the circle on the vertical line */
+    width: 10px;
+    height: 10px;
+    border-radius: 50%; /* Make it a circle */
+    background-color: red;
+    z-index: 3; /* Circle above all to highlight the central line */
+}
+.timeline-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%; /* Central line */
+    right: 50%;
+    width: 2px;
+    background-color: lightgray;
+    z-index: 1; /* Behind items but visible */
+}
+.timeline-item-left .timeline-date {
+    left: 50%; 
+    transform: translateX(20px); 
+}
+.timeline-item-left .timeline-content {
+    right: 50%; 
+    transform: translateX(-20px); 
+}
+.timeline-item-right .timeline-date {
+    right: 50%;
+    transform: translateX(-20px); 
+}
+.timeline-item-right .timeline-content {
+    left: 50%; 
+    transform: translateX(20px); 
+}
+.c-group-title{
+   text-align: center;
+    font-weight: bold;
+    padding: 5px;
+    background-color: aqua;
+    position: relative;
+    z-index: 2;
+    
+}
+.timeline-group-title-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    align-items: center;
+    margin: 20px 0;
+}
